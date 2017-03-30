@@ -16,7 +16,7 @@ class VectorFieldReader(object):
 
     def interpolate_data(self,
                          x_min, x_max, y_min, y_max,
-                         nx_q=20, ny_q=20,
+                         nx=20, ny=20,
                          interpolator='scipy',
                          interpolator_method='linear',
                          _filter=None
@@ -26,16 +26,17 @@ class VectorFieldReader(object):
         x_min, y_min, etc   :: Range of interpolation for the vector field
 
         """
-        if _filter is None:
-            _filter = self.coordinates[:, 0] < 2 * np.max(self.coordinates[:, 0])
 
         x, y = self.coordinates[:, 0], self.coordinates[:, 1]
 
-        # Coordinates for the discretised quiver/field plot
-        xi = np.linspace(x_min, x_max, nx_q)
-        yi = np.linspace(y_min, y_max, ny_q)
+        if _filter is None:
+            _filter = x < 2 * np.max(x)
 
-        interp_data = np.zeros((len(xi), 3))
+        # Coordinates for the discretised quiver/field plot
+        xi = np.linspace(x_min, x_max, nx)
+        yi = np.linspace(y_min, y_max, ny)
+
+        interp_data = [None] * 3
 
         if interpolator == 'scipy':
 
@@ -43,7 +44,7 @@ class VectorFieldReader(object):
 
             # Fill values are NaN to avoid plotting them
             for i in range(3):
-                interp_data[:, i] = scipy.interpolate.griddata(
+                interp_data[i] = scipy.interpolate.griddata(
                     (x[_filter], y[_filter]),
                     self.vector_field[:, i][_filter],
                     (xi, yi),
