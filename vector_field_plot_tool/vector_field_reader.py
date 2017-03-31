@@ -9,16 +9,17 @@ class VectorFieldReader(object):
     Base class for the readers
     """
 
-    def __init__(self):
+    def __init__(self, interpolator='scipy', interpolator_method='linear'):
 
         self.vector_field = None
         self.coordinates = None
 
+        self.interpolator = interpolator
+        self.interpolator_method = interpolator_method
+
     def interpolate_data(self,
                          x_min, x_max, y_min, y_max,
                          nx=20, ny=20,
-                         interpolator='scipy',
-                         interpolator_method='linear',
                          _filter=None
                          ):
         """
@@ -38,7 +39,7 @@ class VectorFieldReader(object):
 
         interp_data = [None] * 3
 
-        if interpolator == 'scipy':
+        if self.interpolator == 'scipy':
 
             xi, yi = np.meshgrid(xi, yi)
 
@@ -48,7 +49,7 @@ class VectorFieldReader(object):
                     (x[_filter], y[_filter]),
                     self.vector_field[:, i][_filter],
                     (xi, yi),
-                    method='linear',
+                    method=self.interpolator_method,
                     fill_value=np.nan
                 )
 

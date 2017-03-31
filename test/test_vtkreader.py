@@ -14,3 +14,7 @@ a, b, c = vr.interpolate_data(-3, 3, -3, 3,
                               _filter=None)
 
 print(c)
+
+from plot_vector_field import plot_vector_field
+
+plot_vector_field(vr, -3, 3, -3, 3)
