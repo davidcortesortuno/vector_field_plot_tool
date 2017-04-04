@@ -295,6 +295,7 @@ def plot_scalar_field(data_reader,  # one of our reader classes
                       colorbar_label='',
                       frame=True,
                       ax=None,
+                      clim=[-1, 1],
                       x_label=r'$x$',
                       y_label=r'$y$',
                       ):
@@ -332,7 +333,7 @@ def plot_scalar_field(data_reader,  # one of our reader classes
                   interpolation='None',
                   extent=[np.min(xi), np.max(xi),
                           np.min(yi), np.max(yi)],
-                  vmin=-1, vmax=1,
+                  vmin=clim[0], vmax=clim[1],
                   origin='lower',
                   alpha=alpha,
                   cmap=plt.get_cmap(cmap),

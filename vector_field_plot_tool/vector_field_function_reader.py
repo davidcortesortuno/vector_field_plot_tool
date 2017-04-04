@@ -7,7 +7,8 @@ import numpy as np
 
 class VectorFieldFunctionReader(VectorFieldReader):
     """
-
+    Reader for a function that returns a vector field as a function
+    of coordinates
     """
 
     def __init__(self, vf_function):
