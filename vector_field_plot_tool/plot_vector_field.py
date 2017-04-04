@@ -97,6 +97,7 @@ def plot_vector_field(data_reader,  # one of our reader classes
                            spatial ranges (raw data), and it is shown with
                            a colormap.  This option lets the user choose to
                            interpolate the vector field and if a colormap
+                      cmap=plt.get_cmap(cmap),
                            or a single color is used. The options are:
                                 'interpolated_cmap', 'interpolated_color',
                                 'raw_cmap', 'raw_color'
@@ -274,21 +275,22 @@ def plot_vector_field(data_reader,  # one of our reader classes
     if savefig:
         plt.savefig(savefig, bbox_inches='tight')
 
-    plt.show()
+    # plt.show()
+    return ax
 
 
 def plot_scalar_field(data_reader,  # one of our reader classes
                       x_min, x_max,
                       y_min, y_max,
-                      v_component='vz',
+                      vf_component='z',
                       normalize_data=True,
-                      nx=100, ny=100,
+                      nx=20, ny=20,
                       xlim=None,
                       ylim=None,
                       figsize=(8., 8.),
                       cmap='gist_earth',
                       hsv_map=False,
-                      cmap_alpha=1.,
+                      alpha=1.,
                       colorbar=False,
                       colorbar_label='',
                       frame=True,
@@ -298,8 +300,11 @@ def plot_scalar_field(data_reader,  # one of our reader classes
                       ):
 
     """
-    This plot the sacalar field as a background
+    This function plots the scalar field as a background
     """
+
+    # Vector field components
+    cs = {'x': 0, 'y': 1, 'z': 2}
 
     (xi, yi,
      scalar_xyz) = data_reader.interpolate_data(x_min, x_max,
@@ -315,50 +320,22 @@ def plot_scalar_field(data_reader,  # one of our reader classes
         fig = plt.figure(figsize=figsize, frameon=frame)
         ax = fig.add_subplot(111)
 
-    if not hsv_map:
+    if hsv_map:
         # Plot the colour map with the interpolated values of v_i
-        ax.pcolormesh(xi, yi, scalar_xyz[2], cmap=plt.get_cmap(cmap),
+        ax.pcolormesh(xi, yi, scalar_xyz[cs[vf_component]],
+                      cmap=plt.get_cmap(cmap),
                       vmin=-1, vmax=1,
-                      alpha=cmap_alpha)
+                      alpha=alpha)
     else:
         # Plot the colour map with the HSV colours
-        ax.imshow(zi, interpolation='None',
+        ax.imshow(scalar_xyz[cs[vf_component]],
+                  interpolation='None',
                   extent=[np.min(xi), np.max(xi),
                           np.min(yi), np.max(yi)],
                   vmin=-1, vmax=1,
-                  origin='lower'
+                  origin='lower',
+                  alpha=alpha,
+                  cmap=plt.get_cmap(cmap),
                   )
-    # if colorbar:
-    #     if hsv_map:
-    #         cmap_cb = matplotlib.cm.get_cmap(name='hsv')
-    #     else:
-    #         cmap_cb = matplotlib.cm.get_cmap(name=cmap)
 
-    #     if normalize_data or hsv_map:
-    #         norm = matplotlib.colors.Normalize(-1, 1)
-    #     else:
-    #         norm = matplotlib.colors.Normalize(vmin=np.min(zi),
-    #                                            vmax=np.max(zi))
-
-    #     # Add axes for the colorbar with respect to the top image
-    #     divider = make_axes_locatable(ax)
-    #     cax = divider.append_axes("right", size="3%", pad=0.05)
-
-    #     # Colorbar
-    #     cbar = matplotlib.colorbar.ColorbarBase(cax,
-    #                                             cmap=cmap_cb,
-    #                                             norm=norm,
-    #                                             # ticks=[-1, 0, 1],
-    #                                             orientation='vertical',
-    #                                             )
-
-    #     cbar.set_label(colorbar_label, rotation=270)
-
-    #     # Label HSV colorbar accordingly
-    #     if hsv_map:
-    #         cbar.set_ticks([1, 0, -1])
-    #         cbar.set_ticklabels([r'$2\pi$', r'$\pi$', r'$0$'])
-    #         # cbar.update_ticks()
-
-    # if not quiver_map:
-    #     quiver_map = cmap + '_r'
+    return ax
