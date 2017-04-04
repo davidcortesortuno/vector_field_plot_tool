@@ -23,7 +23,7 @@ def plot_vector_field(data_reader,  # one of our reader classes
                       colorbar_label='',
                       quiver_type='interpolated_cmap',
                       quiver_color='k',
-                      pivot='middle',
+                      pivot='mid',
                       nx=20,
                       ny=20,
                       frame=True,
@@ -312,6 +312,8 @@ def plot_scalar_field(data_reader,  # one of our reader classes
                                                 y_min, y_max,
                                                 nx=nx, ny=ny
                                                 )
+    dx = (xi[0, 1] - xi[0, 0]) * 0.5
+    dy = (yi[1, 0] - yi[0, 0]) * 0.5
 
     # ---------------------------------------------------------------------
     # Now plot in matplotlib ----------------------------------------------
@@ -331,8 +333,8 @@ def plot_scalar_field(data_reader,  # one of our reader classes
         # Plot the colour map with the HSV colours
         ax.imshow(scalar_xyz[cs[vf_component]],
                   interpolation='None',
-                  extent=[np.min(xi), np.max(xi),
-                          np.min(yi), np.max(yi)],
+                  extent=[np.min(xi) - dx, np.max(xi) + dx,
+                          np.min(yi) - dy, np.max(yi) + dy],
                   vmin=clim[0], vmax=clim[1],
                   origin='lower',
                   alpha=alpha,

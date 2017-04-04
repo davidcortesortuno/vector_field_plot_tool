@@ -44,11 +44,13 @@ ar = ArrayReader(coordinates, vector_field)
 
 # -----------------------------------------------------------------------------
 
-ax = plot_scalar_field(ar, 1, 10, 1, 6, alpha=0.4, cmap='viridis_r',
+ax = plot_scalar_field(ar, 1, 10, 1, 6, alpha=1, cmap='viridis_r',
                        vf_component='x',
-                       clim=[np.min(vector_field), np.max(vector_field)],
+                       clim=[np.min(vector_field),
+                             np.max(vector_field)],
                        )
 plot_vector_field(ar, 1, 10, 1, 6, colorbar=True, ax=ax, cmap='viridis_r',
                   vf_component='x',
                   clim=[np.min(vector_field), np.max(vector_field)],
+                  quiver_type='interpolated_color',
                   savefig='test.pdf')
