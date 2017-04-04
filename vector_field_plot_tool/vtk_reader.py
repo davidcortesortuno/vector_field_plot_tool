@@ -14,7 +14,7 @@ class VTKReader(VectorFieldReader):
 
     def __init__(self, vtk_file, vtkfiletype='XMLUnstructuredGrid'):
 
-        super(VectorFieldReader, self).__init__()
+        super().__init__()
 
         self.vtk_file = vtk_file
         self.vtkfiletype = vtkfiletype

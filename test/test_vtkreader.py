@@ -9,12 +9,12 @@ vr.extract_data()
 
 a, b, c = vr.interpolate_data(-3, 3, -3, 3,
                               nx=10, ny=10,
-                              interpolator='scipy',
-                              interpolator_method='linear',
                               _filter=None)
 
-print(c)
+# print(c)
 
 from plot_vector_field import plot_vector_field
+import matplotlib
+matplotlib.pyplot.rcParams['backend'] = 'TkAgg'
 
-plot_vector_field(vr, -3, 3, -3, 3)
+plot_vector_field(vr, -3, 3, -3, 3, colorbar=True, savefig='test.pdf')
