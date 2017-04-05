@@ -7,9 +7,13 @@ import scipy.interpolate
 class VectorFieldReader(object):
     """
     Base class for the readers
+
+    interpolator          :: 'scipy' or 'natgrid'
+    interpolator_method   :: Method for scipy or natgrid, default: 'cubic'
+
     """
 
-    def __init__(self, interpolator='scipy', interpolator_method='linear'):
+    def __init__(self, interpolator='scipy', interpolator_method='cubic'):
 
         self.vector_field = None
         self.coordinates = None

@@ -2,8 +2,9 @@ import numpy as np
 import sys
 sys.path.append('../vector_field_plot_tool')
 from array_reader import ArrayReader
-from plot_vector_field import plot_vector_field, plot_scalar_field
+from plot_vector_field import plot_vector_field, plot_scalar_field, plot_colorbar
 from discretisedfield import Mesh, Field
+import matplotlib.pyplot as plt
 
 # Define a Mesh and a DiscretisedField object
 c1 = (1, 1, 1)
@@ -22,6 +23,7 @@ def value(pos):
     fx = 2 * x * y
     fy = 2 * y + x
     fz = x + z
+    # fz = 0
 
     return (fx, fy, fz)
 
@@ -44,13 +46,22 @@ ar = ArrayReader(coordinates, vector_field)
 
 # -----------------------------------------------------------------------------
 
-ax = plot_scalar_field(ar, 1, 10, 1, 6, alpha=1, cmap='viridis_r',
+ax = plot_scalar_field(ar, 1, 10, 1, 6, alpha=1,
+                       # hsv_map=True,
+                       cmap='viridis_r',
                        vf_component='x',
                        clim=[np.min(vector_field),
                              np.max(vector_field)],
                        )
-plot_vector_field(ar, 1, 10, 1, 6, colorbar=True, ax=ax, cmap='viridis_r',
-                  vf_component='x',
-                  clim=[np.min(vector_field), np.max(vector_field)],
-                  quiver_type='interpolated_color',
-                  savefig='test.pdf')
+ax = plot_vector_field(ar, 1, 10, 1, 6, ax=ax, cmap='viridis_r',
+                       vf_component='x',
+                       clim=[np.min(vector_field), np.max(vector_field)],
+                       quiver_type='interpolated_color'
+                       )
+plot_colorbar(ax)
+
+ax.set_xlabel(r'$x$')
+ax.set_ylabel(r'$y$')
+
+
+plt.savefig('test.pdf', bbox_inches='tight')

@@ -12,26 +12,19 @@ def plot_vector_field(data_reader,  # one of our reader classes
                       y_min, y_max,
                       vf_component='z',
                       normalize_data=True,
-                      xlim=None,
-                      ylim=None,
                       figsize=(8., 8.),
                       cmap='viridis',
                       hsv_map=False,
                       cmap_alpha=1.,
                       quiver_map=None,
-                      colorbar=False,
-                      colorbar_label='',
                       quiver_type='interpolated_cmap',
                       quiver_color='k',
                       pivot='mid',
                       nx=20,
                       ny=20,
-                      frame=True,
                       ax=None,
-                      x_label=r'$x$',
-                      y_label=r'$y$',
                       clim=[-1, 1],
-                      savefig=None,
+                      frame=True,
                       **quiver_args
                       ):
 
@@ -62,8 +55,6 @@ def plot_vector_field(data_reader,  # one of our reader classes
                            for the interpolations using the data points,
                            i.e. the number of divisions
                            between x_min and x_max; y_min and y_max
-    xlim, ylim          :: Plot ranges in the x and y directions, given
-                           as a list with the [min, max] values
     figsize             :: Dimensions of the plot as a tuple,
                            (8, 8) by default
     cmap                :: Palette of the colourmap (not considered if
@@ -89,9 +80,6 @@ def plot_vector_field(data_reader,  # one of our reader classes
     quiver_map          :: Colour palette of the arrows of the vector
                            field. By default it is the inverted
                            palette of cmap
-    colorbar            :: Set True to plot a color bar with the palette
-    colorbar_label      :: String with the colorbbar label
-                           (shown rotated in 270 degrees)
     quiver_type         :: By default the quiver plot is not interpolated,
                            it shows all the data points in the specified
                            spatial ranges (raw data), and it is shown with
@@ -113,27 +101,12 @@ def plot_vector_field(data_reader,  # one of our reader classes
                            y_min and y_max). By default: 20 x 20 arrows are
                            drawn
     frame               :: Frame of the plot
-    predefined_axis     :: Can be a predefined matplotlib axis object to
+    ax                  :: Can be a predefined matplotlib axis object to
                            show the plot on it. This is useful to make
                            a grid of plots
-    x_label, y_label    :: Axes labels
-    savefig             :: String with the route and/or name of the
-                           file if it is going to
-                           be saved. The format is obtained from the name,
-                           e.g. 'my_plot.pdf'
     **quiver_args       :: Any extra keyword arguments for the quiver plot
 
     # DEPRECATED::
-    interpolator        :: The interpolation from the irregular mesh
-                           of the VTK file is done by default using
-                           'scipy'. It is also possible
-                           to use matplotlib.mlab.griddata passing
-                           the option 'natgrid'
-                           If an error about not having griddata from
-                           matplotlib, is raised, it can be installed
-                           from the instructions in the print statement
-    interpolator_method   :: Method for scipy or natgrid, default: 'cubic'
-                             or 'nn'
     interpolator_hsv_method     :: Method for scipy, for the HSV mapping.
                                    Default: 'linear'
     interpolator_quiver_method :: Method for scipy or natgrid when
@@ -215,39 +188,6 @@ def plot_vector_field(data_reader,  # one of our reader classes
         print('Specify a valid option for the quiver plot')
         return
 
-    if colorbar:
-        if hsv_map:
-            cmap_cb = matplotlib.cm.get_cmap(name='hsv')
-        else:
-            cmap_cb = matplotlib.cm.get_cmap(name=cmap)
-
-        if normalize_data or hsv_map:
-            norm = matplotlib.colors.Normalize(-1, 1)
-        else:
-            norm = matplotlib.colors.Normalize(vmin=np.min(quiv_xyz[cs[vf_component]]),
-                                               vmax=np.max(quiv_xyz[cs[vf_component]])
-                                               )
-
-        # Add axes for the colorbar with respect to the top image
-        divider = make_axes_locatable(ax)
-        cax = divider.append_axes("right", size="3%", pad=0.05)
-
-        # Colorbar
-        cbar = matplotlib.colorbar.ColorbarBase(cax,
-                                                cmap=cmap_cb,
-                                                norm=norm,
-                                                # ticks=[-1, 0, 1],
-                                                orientation='vertical',
-                                                )
-
-        cbar.set_label(colorbar_label, rotation=270)
-
-    #     # Label HSV colorbar accordingly
-    #     if hsv_map:
-    #         cbar.set_ticks([1, 0, -1])
-    #         cbar.set_ticklabels([r'$2\pi$', r'$\pi$', r'$0$'])
-    #         # cbar.update_ticks()
-
     # if not quiver_map:
     #     quiver_map = cmap + '_r'
 
@@ -260,22 +200,6 @@ def plot_vector_field(data_reader,  # one of our reader classes
 
     #     xi_q, yi_q = x, y
 
-    if not frame:
-        ax.axis('off')
-
-    if xlim:
-        ax.set_xlim(xlim)
-    if ylim:
-        ax.set_ylim(ylim)
-
-    # Axes labels
-    ax.set_xlabel(x_label)
-    ax.set_ylabel(y_label)
-
-    if savefig:
-        plt.savefig(savefig, bbox_inches='tight')
-
-    # plt.show()
     return ax
 
 
@@ -291,8 +215,6 @@ def plot_scalar_field(data_reader,  # one of our reader classes
                       cmap='gist_earth',
                       hsv_map=False,
                       alpha=1.,
-                      colorbar=False,
-                      colorbar_label='',
                       frame=True,
                       ax=None,
                       clim=[-1, 1],
@@ -324,11 +246,25 @@ def plot_scalar_field(data_reader,  # one of our reader classes
         ax = fig.add_subplot(111)
 
     if hsv_map:
+        field_data = np.vstack((scalar_xyz[0],
+                                scalar_xyz[1],
+                                scalar_xyz[2]
+                                )).reshape(3, -1).T
+        rgb_data = generate_rgbs(field_data)
+        rgb_data.shape = (scalar_xyz[0].shape[0], scalar_xyz[0].shape[0], 3)
+        # rgb_data = rgb_data.T.reshape(3, -1)
+        # grid_nx = scalar_xyz[0].shape[0]
+        # rgbs = [rgb_data[0].reshape(grid_nx, -1),
+        #         rgb_data[1].reshape(grid_nx, -1),
+        #         rgb_data[2].reshape(grid_nx, -1)
+        #         ]
+
         # Plot the colour map with the interpolated values of v_i
-        ax.pcolormesh(xi, yi, scalar_xyz[cs[vf_component]],
-                      cmap=plt.get_cmap(cmap),
-                      vmin=-1, vmax=1,
-                      alpha=alpha)
+        ax.imshow(rgb_data,
+                  extent=[np.min(xi) - dx, np.max(xi) + dx,
+                          np.min(yi) - dy, np.max(yi) + dy],
+                  vmin=-1, vmax=1,
+                  alpha=alpha)
     else:
         # Plot the colour map with the HSV colours
         ax.imshow(scalar_xyz[cs[vf_component]],
@@ -342,3 +278,75 @@ def plot_scalar_field(data_reader,  # one of our reader classes
                   )
 
     return ax
+
+
+def plot_colorbar(ax,
+                  cmap='viridis',
+                  hsv_map=False,
+                  normalize_data=True,
+                  colorbar_label='',
+                  clim=[-1, 1]
+                  ):
+    if hsv_map:
+        cmap_cb = matplotlib.cm.get_cmap(name='hsv')
+    else:
+        cmap_cb = matplotlib.cm.get_cmap(name=cmap)
+
+    if normalize_data or hsv_map:
+        norm = matplotlib.colors.Normalize(-1, 1)
+    else:
+        norm = matplotlib.colors.Normalize(vmin=clim[0],
+                                           vmax=clim[1]
+                                           )
+
+    # Add axes for the colorbar with respect to the top image
+    divider = make_axes_locatable(ax)
+    cax = divider.append_axes("right", size="3%", pad=0.05)
+
+    # Colorbar
+    cbar = matplotlib.colorbar.ColorbarBase(cax,
+                                            cmap=cmap_cb,
+                                            norm=norm,
+                                            # ticks=[-1, 0, 1],
+                                            orientation='vertical',
+                                            )
+
+    cbar.set_label(colorbar_label, rotation=270)
+
+    # # Label HSV colorbar accordingly
+    # if hsv_map:
+    #     cbar.set_ticks([1, 0, -1])
+    #     cbar.set_ticklabels([r'$2\pi$', r'$\pi$', r'$0$'])
+    #     # cbar.update_ticks()
+
+
+# TOOLS -----------------------------------------------------------------------
+import colorsys
+
+
+def convert_to_rgb(hls_color):
+    return np.array(colorsys.hls_to_rgb(hls_color[0] / (2 * np.pi),
+                                        hls_color[1],
+                                        hls_color[2]
+                                        ))
+
+
+def generate_rgbs(field_data):
+    """
+    field_data      ::  (n, 3) array
+    """
+    hls = np.ones_like(field_data)
+    hls[:, 0] = np.arctan2(field_data[:, 1],
+                           field_data[:, 0]
+                           )
+    hls[:, 0][hls[:, 0] < 0] = hls[:, 0][hls[:, 0] < 0] + 2 * np.pi
+
+    hls[:, 1] = 0.5 * (field_data[:, 2] + 1)
+    # self.hls[:, 2] = 0.5 * (self.sim.spin.reshape(-1, 3)[:, 2] + 1)
+
+    rgbs = np.apply_along_axis(convert_to_rgb, 1, hls)
+
+    # Some RGB values can get very small magnitudes, like 1e-10:
+    rgbs[rgbs < 0] += 2 * np.pi
+
+    return rgbs
