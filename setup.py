@@ -10,5 +10,9 @@ setup(
         'matplotlib', 'scipy'
     ],
     packages=['vectorspector', 'vectorspector.readers'],
-    # scripts=['bin/nb_cat']
+    # scripts=['bin/nb_cat'],
+    license='BSD3',
+    # package_data={
+    #     'tests':['Makefile']
+    #     }
 )
