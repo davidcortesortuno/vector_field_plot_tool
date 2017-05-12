@@ -9,6 +9,6 @@ setup(
     install_requires=[
         'matplotlib', 'scipy'
     ],
-    py_modules=['vectorspector'],
+    packages=['vectorspector', 'vectorspector.readers'],
     # scripts=['bin/nb_cat']
 )
