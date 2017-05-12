@@ -1,7 +1,7 @@
 import sys
-sys.path.append('../vector_field_plot_tool')
+sys.path.append('..')
 from vtk_reader import VTKReader
-from plot_vector_field import plot_vector_field, plot_scalar_field
+from vectorspector.plot_vector_field import plot_vector_field, plot_scalar_field
 import matplotlib.pyplot as plt
 
 vr = VTKReader('sphere000000.vtu')

@@ -1,3 +1,3 @@
 import sys
-sys.path.append('../vector_field_plot_tool')
-from vtk_reader import VTKReader
+sys.path.append('..')
+from vectorspector.readers.vtk_reader import VTKReader
