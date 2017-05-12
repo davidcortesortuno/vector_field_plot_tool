@@ -44,24 +44,28 @@ vector_field = np.array(vector_field)
 
 ar = ArrayReader(coordinates, vector_field)
 
+(xi, yi, zi,
+quiv_xyz) = ar.interpolate_data(1, 10, 1, 6, 1, 9,
+	                        nx=20, ny=20, nz=20
+				)
 # -----------------------------------------------------------------------------
 
-ax = plot_scalar_field(ar, 1, 10, 1, 6, alpha=1,
-                       # hsv_map=True,
-                       cmap='viridis_r',
-                       vf_component='x',
-                       clim=[np.min(vector_field),
-                             np.max(vector_field)],
-                       )
-ax = plot_vector_field(ar, 1, 10, 1, 6, ax=ax, cmap='viridis_r',
-                       vf_component='x',
-                       clim=[np.min(vector_field), np.max(vector_field)],
-                       quiver_type='interpolated_color'
-                       )
-plot_colorbar(ax)
-
-ax.set_xlabel(r'$x$')
-ax.set_ylabel(r'$y$')
-
-
-plt.savefig('test.pdf', bbox_inches='tight')
+# ax = plot_scalar_field(ar, 1, 10, 1, 6, alpha=1,
+#                        # hsv_map=True,
+#                        cmap='viridis_r',
+#                        vf_component='x',
+#                        clim=[np.min(vector_field),
+#                              np.max(vector_field)],
+#                        )
+# ax = plot_vector_field(ar, 1, 10, 1, 6, ax=ax, cmap='viridis_r',
+#                        vf_component='x',
+#                        clim=[np.min(vector_field), np.max(vector_field)],
+#                        quiver_type='interpolated_color'
+#                        )
+# plot_colorbar(ax)
+# 
+# ax.set_xlabel(r'$x$')
+# ax.set_ylabel(r'$y$')
+# 
+# 
+# plt.savefig('test.pdf', bbox_inches='tight')

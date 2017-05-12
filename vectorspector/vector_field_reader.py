@@ -10,10 +10,11 @@ class VectorFieldReader(object):
 
     interpolator          :: 'scipy' or 'natgrid'
     interpolator_method   :: Method for scipy or natgrid, default: 'cubic'
+                             cubic only works for 1D and 2D data (FIX)
 
     """
 
-    def __init__(self, interpolator='scipy', interpolator_method='cubic'):
+    def __init__(self, interpolator='scipy', interpolator_method='linear'):
 
         self.vector_field = None
         self.coordinates = None
@@ -22,8 +23,8 @@ class VectorFieldReader(object):
         self.interpolator_method = interpolator_method
 
     def interpolate_data(self,
-                         x_min, x_max, y_min, y_max,
-                         nx=20, ny=20,
+                         x_min, x_max, y_min, y_max, z_min, z_max,
+                         nx=20, ny=20, nz=20,
                          _filter=None
                          ):
         """
@@ -32,7 +33,7 @@ class VectorFieldReader(object):
 
         """
 
-        x, y = self.coordinates[:, 0], self.coordinates[:, 1]
+        x, y, z = self.coordinates[:, 0], self.coordinates[:, 1], self.coordinates[:, 2]
 
         if _filter is None:
             _filter = x < 2 * np.max(x)
@@ -40,21 +41,22 @@ class VectorFieldReader(object):
         # Coordinates for the discretised quiver/field plot
         xi = np.linspace(x_min, x_max, nx)
         yi = np.linspace(y_min, y_max, ny)
+        zi = np.linspace(z_min, z_max, nz)
 
         interp_data = [None] * 3
 
         if self.interpolator == 'scipy':
 
-            xi, yi = np.meshgrid(xi, yi)
+            xi, yi, zi = np.meshgrid(xi, yi, zi)
 
             # Fill values are NaN to avoid plotting them
             for i in range(3):
                 interp_data[i] = scipy.interpolate.griddata(
-                    (x[_filter], y[_filter]),
+                    (x[_filter], y[_filter], z[_filter]),
                     self.vector_field[:, i][_filter],
-                    (xi, yi),
+                    (xi, yi, zi),
                     method=self.interpolator_method,
                     fill_value=np.nan
                 )
 
-        return xi, yi, interp_data
+        return xi, yi, zi, interp_data

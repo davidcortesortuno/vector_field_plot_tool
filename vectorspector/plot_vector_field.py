@@ -10,6 +10,7 @@ import numpy as np
 def plot_vector_field(data_reader,  # one of our reader classes
                       x_min, x_max,
                       y_min, y_max,
+                      z_min, z_max,
                       vf_component='z',
                       normalize_data=True,
                       figsize=(8., 8.),
@@ -22,6 +23,7 @@ def plot_vector_field(data_reader,  # one of our reader classes
                       pivot='mid',
                       nx=20,
                       ny=20,
+                      nz=20,
                       ax=None,
                       clim=[-1, 1],
                       frame=True,
