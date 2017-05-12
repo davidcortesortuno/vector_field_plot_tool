@@ -1,4 +1,4 @@
-from vector_field_reader import VectorFieldReader
+from ..vector_field_reader import VectorFieldReader
 import numpy as np
 import vtk
 from vtk.util.numpy_support import vtk_to_numpy

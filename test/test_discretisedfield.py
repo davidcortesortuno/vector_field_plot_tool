@@ -1,8 +1,8 @@
 import numpy as np
 import sys
-sys.path.append('../vector_field_plot_tool')
-from array_reader import ArrayReader
-from plot_vector_field import plot_vector_field, plot_scalar_field, plot_colorbar
+sys.path.append('..')
+from vector_field_plot_tool.readers.array_reader import ArrayReader
+from vector_field_plot_tool.plot_vector_field import plot_vector_field, plot_scalar_field, plot_colorbar
 from discretisedfield import Mesh, Field
 import matplotlib.pyplot as plt
 
